@@ -1,0 +1,531 @@
+<!doctype html><html lang="zh-Hant"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>診間交接（示範）</title>
+<meta name="robots" content="noindex">
+<style>
+:root{--bg:#f7f4ef;--card:#fffdfa;--ink:#2c2926;--ink2:#5b5751;--line:#e5ded3;--edge:#8e887f;
+ --teal:#0f6f68;--teal-d:#0a544e;--teal-bg:#e8f2f0;--red:#913327;--red-bg:#fdf1ef;
+ --amber:#6f4f0c;--amber-bg:#fdf7e9;--violet:#544681;--violet-bg:#efecf7;--r:12px}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+ font:16px/1.6 "Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif}
+header{position:sticky;top:0;z-index:20;background:var(--teal);color:#fffdfa;
+ padding:12px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+header h1{font-size:19px;margin:0;font-weight:700}
+header .sp{margin-left:auto;display:flex;gap:10px;align-items:center;font-size:14px}
+.badge{background:#fffdfa;color:var(--teal-d);border-radius:999px;padding:2px 12px;font-weight:700;font-size:14px}
+.hbtn{background:rgba(255,253,250,.16);border:1px solid rgba(255,253,250,.5);color:#fffdfa;
+ border-radius:8px;padding:7px 14px;font:inherit;font-size:14px;cursor:pointer}
+.wrap{max-width:1040px;margin:0 auto;padding:18px 16px 80px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+h2{font-size:17px;margin:0 0 12px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-size:15px;vertical-align:middle}
+th{color:var(--ink2);font-weight:600;font-size:13px}
+tr.row{cursor:pointer}tr.row:hover{background:var(--teal-bg)}
+.mrn{font-weight:700;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;padding:2px 10px;border-radius:999px;font-size:13px;font-weight:700;margin-right:5px}
+.t-red{background:var(--red-bg);color:var(--red)}
+.t-amb{background:var(--amber-bg);color:var(--amber)}
+.t-vio{background:var(--violet-bg);color:var(--violet)}
+.t-grey{background:#efeae2;color:var(--ink2)}
+.t-ok{background:var(--teal-bg);color:var(--teal-d)}
+/* ---- 左欄分診方框:三層視覺重量,不是六色平鋪 ----
+   Tier 1（唯一滿版上色）只留給「今天必須處理」—— 掃視時第一眼要贏的東西。
+   Tier 2（白底＋色邊）是「人講的話」這條線：病人原話／個管師初審，值得多看一眼但不跟紅搶。
+   Tier 3（安靜卡片，色只留在圓點＋標題字）是「要注意但非今日」與「判不出來」。
+   原本四種色調同場競爭、全部上色＝沒有層次；現在只留一個滿版色，最急的才會跳出來。 */
+.box{border-radius:var(--r);padding:15px 18px;margin-bottom:14px;
+ background:var(--card);border:1px solid var(--line)}
+.box h3{margin:0 0 8px;font-size:16px}
+.box ul{margin:0;padding-left:20px}.box li{margin:3px 0}
+.b-red{background:var(--red-bg);border-color:var(--red-bg);border-left:6px solid var(--red)}
+.b-red h3{color:var(--red)}
+.b-cc{border-left:4px solid var(--violet)}
+.b-cc h3{color:var(--violet)}
+.b-amb h3{color:var(--amber)}
+.b-amb h3::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;
+ background:var(--amber);margin-right:7px;vertical-align:middle}
+.b-grey h3{color:var(--ink2)}
+.b-grey h3::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;
+ background:var(--edge);margin-right:7px;vertical-align:middle}
+.ccq{font-size:19px;line-height:1.7;color:var(--ink);margin:0;
+ padding:10px 14px;background:var(--violet-bg);border-radius:8px;border:1px dashed var(--violet)}
+/* ---- 證據信封 ---- */
+.env{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.envh{display:flex;align-items:center;gap:10px;padding:11px 14px;background:#faf7f2;flex-wrap:wrap}
+.envh b{font-size:15px}
+.envb{padding:11px 14px;font-size:14px;color:var(--ink2);border-top:1px solid var(--line)}
+.envb code{background:#f1ede6;border-radius:4px;padding:1px 6px;font-size:13px;color:var(--ink)}
+.rng{font-variant-numeric:tabular-nums;font-weight:700;font-size:15px;
+ background:var(--card);border:1px solid var(--line);border-radius:6px;padding:2px 10px}
+.miss{margin:6px 0 0;padding-left:19px}.miss li{margin:2px 0}
+/* ---- 分級鈕:一律虛線未確認 ---- */
+.grades{display:flex;gap:6px;margin-left:auto}
+.gb{width:44px;height:40px;border:2px dashed var(--edge);background:var(--card);border-radius:8px;
+ font:inherit;font-size:16px;font-weight:700;color:var(--ink2);cursor:pointer}
+.gb:hover{border-color:var(--teal)}
+.gb.on{border:2px solid var(--teal);background:var(--teal);color:#fffdfa}
+.gb.sugg{border-color:var(--violet);color:var(--violet)}
+.banner{background:var(--amber-bg);border:1px solid #e3d2a4;border-left:6px solid var(--amber);
+ border-radius:10px;padding:13px 16px;font-size:15px;color:#6d4c0c;margin-bottom:14px;line-height:1.65}
+details summary{cursor:pointer;color:var(--teal-d);font-weight:700;padding:8px 0;font-size:15px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;font-size:14px}
+.kv dt{color:var(--ink2)}.kv dd{margin:0}
+.hid{display:none!important}
+.foot{color:var(--ink2);font-size:13px;text-align:center;margin-top:8px}
+textarea{width:100%;min-height:70px;font:inherit;font-size:15px;padding:10px;
+ border:1px solid var(--edge);border-radius:8px;background:var(--card);color:var(--ink);resize:vertical}
+.btn{min-height:46px;padding:0 24px;border-radius:9px;border:2px solid var(--teal);
+ background:var(--teal);color:#fffdfa;font:inherit;font-size:16px;font-weight:700;cursor:pointer}
+.btn.ghost{background:var(--card);color:var(--teal-d)}
+#login{max-width:420px;margin:60px auto}
+input.f{width:100%;font:inherit;font-size:17px;padding:11px;border:1px solid var(--line);
+ border-radius:8px;background:var(--card);color:var(--ink);margin-bottom:12px}
+audio{width:100%;margin-top:8px}
+img.shot{max-width:280px;border-radius:8px;border:1px solid var(--line);margin-top:8px}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:28px;z-index:60;background:#2c2926;
+ color:#fffdfa;padding:11px 20px;border-radius:999px;font-size:15px;opacity:0;transition:opacity .25s}
+#toast.on{opacity:.95}
+
+/* 焦點可見:原本 :focus{outline:none} 把鍵盤使用者的焦點指示拿掉了,
+   那是 WCAG 2.4.7 的違反。改用 :focus-visible 保留滑鼠時的乾淨外觀。 */
+:focus-visible{outline:3px solid var(--teal);outline-offset:2px;border-radius:4px}
+button:focus-visible,.opt:focus-visible,.chip:focus-visible{outline-offset:3px}
+
+/* ===== 判讀速度優先的版面 ===== */
+.wrap{max-width:1360px}
+#detail{scroll-margin-top:70px}
+.card{scroll-margin-top:70px}
+.cols{display:grid;grid-template-columns:minmax(300px,34%) 1fr;gap:16px;align-items:start}
+@media(max-width:980px){.cols{grid-template-columns:1fr}}
+/* 一眼摘要:進入病人後第一行就給出全貌,不必先讀四個方框 */
+.gist{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:10px 14px;margin-bottom:12px;
+  background:var(--card);border:1px solid var(--edge);border-radius:10px}
+.g{display:inline-flex;align-items:center;gap:6px;padding:3px 11px;border-radius:999px;
+  font-size:14px;font-weight:700}
+.g b{font-size:17px;font-variant-numeric:tabular-nums}
+.g-red{background:var(--red-bg);color:var(--red)}
+.g-vio{background:var(--violet-bg);color:var(--violet)}
+.g-amb{background:var(--amber-bg);color:var(--amber)}
+.g-grey{background:#efeae2;color:var(--ink2)}
+.g-ok{background:var(--teal-bg);color:var(--teal-d)}
+.box{padding:12px 15px;margin-bottom:10px}
+.box h3{font-size:15px;margin:0 0 6px}
+.box li{margin:2px 0;font-size:14px}
+/* 器官分組:標題一行,項目一行,細節按需展開 */
+.soc{margin-bottom:12px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.soch{display:flex;align-items:center;gap:9px;padding:8px 13px;background:#f4f0e9;
+  font-size:14px;font-weight:700;color:var(--ink)}
+.soch .n{margin-left:auto;font-size:13px;color:var(--ink2);font-weight:400}
+.trow{display:flex;align-items:center;gap:10px;padding:8px 13px;border-top:1px solid var(--line);
+  font-size:14px;flex-wrap:wrap}
+.trow.foc{background:var(--teal-bg);box-shadow:inset 3px 0 0 var(--teal)}
+.tname{font-weight:700;min-width:0;flex:1 1 180px}
+.tname small{display:block;font-weight:400;color:var(--ink2);font-size:12.5px;line-height:1.45}
+.rng{font-variant-numeric:tabular-nums;font-weight:700;font-size:13px;background:var(--card);
+  border:1px solid var(--edge);border-radius:6px;padding:1px 8px;white-space:nowrap}
+.grades{display:flex;gap:4px}
+.gb{width:34px;height:32px;border:2px dashed var(--edge);background:var(--card);border-radius:7px;
+  font:inherit;font-size:14px;font-weight:700;color:var(--ink2);cursor:pointer;padding:0}
+.gb:hover{border-color:var(--teal)}
+.gb.on{border:2px solid var(--teal);background:var(--teal);color:#fffdfa}
+.gb.sugg{border-color:var(--violet);color:var(--violet)}
+.info{width:26px;height:26px;border:1px solid var(--edge);background:var(--card);border-radius:6px;
+  font-size:13px;color:var(--ink2);cursor:pointer;padding:0;line-height:1}
+.det{padding:9px 13px 11px 13px;background:#faf7f2;border-top:1px dashed var(--edge);
+  font-size:13px;color:var(--ink2)}
+.det code{background:#efeae2;border-radius:4px;padding:1px 5px;color:var(--ink);font-size:12px}
+/* 確認列固定在底部:原本要捲 3600px 才按得到 */
+#actbar{position:sticky;bottom:0;z-index:15;background:var(--card);border:1px solid var(--edge);
+  border-radius:10px;padding:10px 14px;margin-top:12px;display:flex;align-items:center;gap:12px;
+  flex-wrap:wrap;box-shadow:0 -3px 14px rgba(44,41,38,.09)}
+#actbar .cnt{font-weight:700}
+.kbd{font-size:12px;color:var(--ink2)}
+.kbd b{background:#efeae2;border:1px solid var(--edge);border-radius:4px;padding:0 5px;
+  font-family:ui-monospace,monospace;font-weight:600;color:var(--ink)}
+.mini{font-size:12.5px;color:var(--ink2);margin:0 0 10px;line-height:1.5}
+details.more>summary{font-size:13.5px;color:var(--ink2);font-weight:400}
+
+/* ===== 清單即決策介面 =====
+   一診四五十人,瓶頸不是讀一位讀得多快,是多數病人根本不需要被讀。
+   所以決策要能在清單完成。 */
+.lbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px}
+.fbtn{border:1px solid var(--edge);background:var(--card);border-radius:999px;padding:6px 14px;
+  font:inherit;font-size:14px;color:var(--ink2);cursor:pointer;display:inline-flex;gap:7px;align-items:center}
+.fbtn.on{border-color:var(--teal);background:var(--teal);color:#fffdfa}
+.fbtn b{font-variant-numeric:tabular-nums}
+tr.lv-red td{background:var(--red-bg)}
+tr.lv-skip td{color:var(--ink2)}
+tr.lv-skip .mrn{font-weight:400}
+.why{font-size:13px;color:var(--ink2);display:block;line-height:1.5}
+.why b{color:var(--red)}
+.said{font-size:13.5px;color:var(--violet);display:block;line-height:1.5}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:1px}
+tr.done td{opacity:.55}tr.done .mrn{font-weight:400}
+.d-red{background:var(--red)}.d-act{background:var(--amber)}
+.d-read{background:var(--violet)}.d-skip{background:#cfc6b8}
+</style></head><body>
+<script>window.__DEMO__ = {"status": "ok", "panel": {"_note": "IO/ADC 門診 ePRO 題庫 v2。繁中為自譯,非 NCI 語言學驗證版本,僅作臨床溝通輔助,不得單獨作為 CTCAE 分級依據。題目設計原則:每一題都對應 CTCAE v6.0 某個分級條件所需的證據,而不是抄 PRO-CTCAE 的抽象量尺。", "ctcae_version": "6.0", "version": "2.0", "order_rationale": "開放主訴問在結構題之前。先跑清單會定錨,病人後面只會補充清單提過的東西。", "chief_complaint": {"id": "cc", "title": "先用您自己的話說", "prompt": "這次回診,最想讓醫師知道的是什麼？", "hint": "想到什麼說什麼,沒有標準答案。不方便打字可以錄音。", "allow_audio": true, "audio_note": "錄音只存在本機,不會上傳雲端,也不會自動轉成文字。個管師會直接聽。"}, "adl": {"title": "這些事情最近做得來嗎", "instrumental": {"id": "adl_i", "text": "煮飯、買菜買衣服、打電話、管錢 — 這些最近有沒有做不來？", "ctcae": "instrumental ADL", "examples": ["煮飯", "買菜買衣服", "打電話", "管錢"]}, "self_care": {"id": "adl_s", "text": "洗澡、穿脫衣服、自己吃飯、上廁所、吃藥 — 這些最近有沒有做不來？", "ctcae": "self-care ADL", "examples": ["洗澡", "穿脫衣服", "自己吃飯", "上廁所", "吃藥"]}, "attribution_prompt": "是哪些不舒服造成的？（可複選）", "why": "CTCAE v6.0 幾乎每個症狀詞條的第二級與第三級分界就是這兩件事。直接問具體生活場景,比問抽象的干擾程度好答,而且落在醫師需要的形式上。"}, "items": [{"id": "fatigue", "label": "疲倦、沒力氣", "icon": "🔋", "organ": "全身", "term": "Fatigue", "class": "both", "q": [{"id": "present", "type": "yesno", "text": "最近有沒有覺得特別累、沒力氣？"}, {"id": "rest", "type": "choice", "text": "休息或睡一覺之後會不會好一點？", "opts": ["會好一點", "休息也沒有用"], "when": "present"}], "note": "Fatigue 在 v6.0 沒有第四五級,而且分級完全由『休息後能否緩解』加上兩個 ADL 決定。病人可以獨力答完整,是本面板唯一能完全定案的症狀之一。"}, {"id": "fever", "label": "發燒", "icon": "🌡️", "organ": "全身", "term": "Fever", "class": "both", "q": [{"id": "present", "type": "yesno", "text": "最近有沒有發燒？"}, {"id": "temp", "type": "number", "text": "量到最高幾度？", "unit": "°C", "min": 35, "max": 43, "step": 0.1, "when": "present", "hint": "沒量過就先不填,但請盡量量一次,這個數字直接決定分級。"}, {"id": "over24", "type": "yesno", "text": "超過 40 度的狀況有沒有持續超過一天？", "when": "temp>=40"}], "note": "Fever 的分級只看溫度與持續時間,沒有其他成分。病人有溫度計就能供出完整的一到四級,是唯一一個病人可以獨力算完的詞條。"}, {"id": "diarrhea", "label": "拉肚子", "icon": "🚻", "organ": "腸胃", "term": "Diarrhea", "class": "both", "q": [{"id": "baseline", "type": "number", "text": "您平常一天大便幾次？", "unit": "次", "min": 0, "max": 30, "hint": "這是基準線。CTCAE 算的是比平常多幾次,不是絕對次數。"}, {"id": "now", "type": "number", "text": "最近最多的一天幾次？", "unit": "次", "min": 0, "max": 40}, {"id": "consistency", "type": "yesno", "text": "大便有沒有變稀、變水？"}, {"id": "blood", "type": "yesno", "text": "有沒有血或黏液？"}, {"id": "abd_pain", "type": "yesno", "text": "肚子會不會痛？"}], "also": ["Colitis"], "note": "血便或黏液便加上腹痛會另外觸發 Colitis 詞條的考量(v6.0 Colitis 第二級即為腹痛,或糞中帶血或黏液)。"}, {"id": "breath", "label": "咳嗽、喘", "icon": "🫁", "organ": "肺", "term": "Dyspnea", "class": "both", "q": [{"id": "exertion", "type": "choice", "text": "什麼時候會喘？", "opts": ["不會喘", "比較用力活動時（爬樓梯、快走）", "稍微動一下就喘（走平路、穿衣服）", "坐著不動也喘"], "hint": "這四個選項直接對應 CTCAE 的分級錨點。"}, {"id": "cough", "type": "choice", "text": "咳嗽的程度？", "opts": ["不咳", "偶爾咳", "常常咳、會影響生活", "咳到很難過"]}, {"id": "new_worse", "type": "yesno", "text": "這個咳或喘是這次治療之後才有的,或明顯變嚴重了嗎？"}], "also": ["Cough", "Pneumonitis"], "red_priority": "high", "note": "⚠️ 肺炎/間質性肺病是 IO 與 ADC 共同的致命毒性,而 Pneumonitis 第一級在定義上是無症狀、只有影像發現,問卷看不到。所以這一組題目的工作不是分級,是觸發影像檢查。T-DXd 的仿單對任何等級的間質性肺病都要求停藥,門檻要設得比其他症狀低。"}, {"id": "rash", "label": "皮膚起疹子", "icon": "🩹", "organ": "皮膚", "term": "Rash maculo-papular", "class": "both", "q": [{"id": "present", "type": "yesno", "text": "皮膚有沒有起疹子？"}, {"id": "symptom", "type": "choice", "text": "疹子會不會不舒服？", "opts": ["不會,只是看得到", "有一點", "中等", "很不舒服"], "when": "present"}, {"id": "extent", "type": "bodymap", "text": "疹子長在哪裡？請在圖上點選", "when": "present", "hint": "點選的範圍會換算成大約的體表面積。CTCAE v6.0 只在第三級用到體表面積,門檻是超過一半。"}, {"id": "blister", "type": "yesno", "text": "有沒有起水泡、脫皮,或嘴巴、眼睛的黏膜破掉？", "when": "present", "hint": "這一題是安全題,勾了會直接亮紅旗。"}, {"id": "photo", "type": "photo", "text": "方便的話拍一張照片", "when": "present", "hint": "照片只存本機。一張照片同時給醫師範圍、型態、分布,那是文字問不出來的。"}], "red_priority": "high", "note": "⚠️ 水泡、脫皮、黏膜侵犯是 Stevens-Johnson 症候群與毒性表皮溶解的警訊,enfortumab vedotin 有相關的黑框警示。這一題不參與分級,直接紅旗。"}, {"id": "itch", "label": "皮膚癢", "icon": "🪶", "organ": "皮膚", "term": "Pruritus", "class": "both", "q": [{"id": "present", "type": "yesno", "text": "皮膚會不會癢？"}, {"id": "spread", "type": "choice", "text": "癢的範圍？", "opts": ["只有一小塊", "好幾個地方", "全身都癢"], "when": "present"}, {"id": "constant", "type": "choice", "text": "是偶爾癢還是一直癢？", "opts": ["偶爾", "一直都在"], "when": "present"}, {"id": "scratch_change", "type": "yesno", "text": "有沒有抓到皮膚破皮、流湯、變厚？", "when": "present"}, {"id": "sleep", "type": "yesno", "text": "會不會癢到睡不著？", "when": "present"}], "note": "v6.0 的 Pruritus 每一級都有病人答得出來的替代條件:範圍與頻率、抓痕造成的皮膚變化、以及第三級的『影響睡眠』。比我原先估計的更可由病人決定。"}, {"id": "nausea", "label": "噁心、吃不下", "icon": "🍽️", "organ": "腸胃", "term": "Nausea", "class": "both", "q": [{"id": "appetite", "type": "choice", "text": "胃口如何？", "opts": ["跟平常一樣", "變差但照吃", "吃得明顯變少", "幾乎吃不下"]}, {"id": "nausea", "type": "yesno", "text": "會不會噁心想吐？"}, {"id": "vomit", "type": "number", "text": "一天吐幾次？", "unit": "次", "min": 0, "max": 30, "when": "nausea"}, {"id": "weight", "type": "number", "text": "跟上次回診比,體重變化幾公斤？", "unit": "kg", "min": -30, "max": 30, "step": 0.5, "hint": "往下用負數。Anorexia 第三級要看有沒有顯著體重減輕。"}], "also": ["Anorexia", "Vomiting"]}, {"id": "joint", "label": "關節痛、肌肉痛", "icon": "🦴", "organ": "關節肌肉", "term": "Arthralgia", "class": "both", "q": [{"id": "joint", "type": "choice", "text": "關節痛的程度？", "opts": ["不痛", "輕微", "中等", "嚴重"]}, {"id": "muscle", "type": "choice", "text": "肌肉痠痛的程度？", "opts": ["不痛", "輕微", "中等", "嚴重"]}, {"id": "weak", "type": "yesno", "text": "有沒有覺得肌肉沒力,例如蹲下站不起來、手舉不高？"}], "also": ["Myalgia", "Myositis"], "note": "『肌肉沒力』是為了篩免疫治療肌炎。肌炎可以跟心肌炎一起出現,不能只當成痠痛。"}, {"id": "endo", "label": "怕冷怕熱、頭暈", "icon": "🦋", "organ": "內分泌", "term": "Thyroiditis", "class": "io", "q": [{"id": "cold_heat", "type": "choice", "text": "最近會不會特別怕冷或特別怕熱？", "opts": ["都不會", "特別怕冷", "特別怕熱"]}, {"id": "dizzy", "type": "yesno", "text": "站起來會不會頭暈、眼前發黑？"}, {"id": "thirst", "type": "yesno", "text": "有沒有特別容易口渴、一直跑廁所？"}], "also": ["Hypothyroidism", "Hyperthyroidism", "Adrenal insufficiency", "Hypophysitis"], "trigger_only": true, "note": "⚠️ 這一組完全不參與分級。甲狀腺炎、腦垂體炎、腎上腺功能不全都由抽血定義,問卷唯一的工作是讓醫師想到要開那張單子。站起來頭暈加上特別容易累,是腎上腺危象的前兆,不可當成一般疲倦。"}, {"id": "cardiac", "label": "胸悶、心悸", "icon": "❤️", "organ": "心臟", "term": "Myocarditis", "class": "io", "q": [{"id": "chest", "type": "yesno", "text": "有沒有胸悶、胸痛？"}, {"id": "palpitation", "type": "yesno", "text": "有沒有心跳很快或不規則的感覺？"}, {"id": "swelling", "type": "yesno", "text": "腳有沒有腫？"}], "also": ["Myositis"], "trigger_only": true, "red_priority": "high", "note": "⚠️ 免疫治療心肌炎發生率低但致死率高,v6.0 這次特地補上了第一級。分級靠心電圖、心肌酵素與影像,問卷只能觸發。胸悶加上肌肉沒力要一起看。"}, {"id": "eye_io", "label": "眼睛痛、畏光", "icon": "👁️", "organ": "眼睛", "term": "Uveitis", "class": "io", "q": [{"id": "pain", "type": "yesno", "text": "眼睛會不會痛或紅？"}, {"id": "photophobia", "type": "yesno", "text": "會不會怕光？"}, {"id": "vision", "type": "yesno", "text": "視力有沒有變模糊？"}], "trigger_only": true}, {"id": "neuro", "label": "手腳麻、沒力", "icon": "🦶", "organ": "神經", "term": "Peripheral sensory neuropathy", "class": "adc", "q": [{"id": "sensory", "type": "choice", "text": "手腳會不會麻、刺刺的、沒感覺？", "opts": ["不會", "輕微", "中等", "嚴重"]}, {"id": "button", "type": "yesno", "text": "扣釦子、拿筷子、開瓶蓋會不會變困難？"}, {"id": "walk", "type": "yesno", "text": "走路會不會不穩、踩不到地的感覺？"}, {"id": "motor", "type": "choice", "text": "手腳有沒有變得沒力氣？", "opts": ["不會", "輕微", "中等", "嚴重"]}], "also": ["Peripheral motor neuropathy"], "note": "⚠️ 這是本面板投資報酬率最高的一題。v6.0 的周邊感覺神經病變分級裡沒有任何客觀檢查,完全是症狀加 ADL,病人是唯一的資訊來源。而它又是 MMAE 類 ADC(enfortumab、tisotumab、polatuzumab、brentuximab)的劑量限制毒性。"}, {"id": "eye_adc", "label": "眼睛乾、視力模糊", "icon": "👓", "organ": "眼睛", "term": "Dry eye", "class": "adc", "q": [{"id": "dry", "type": "choice", "text": "眼睛乾澀、有異物感的程度？", "opts": ["不會", "有一點,點人工淚液就好", "點了也沒用"]}, {"id": "blur", "type": "yesno", "text": "視力有沒有變模糊？"}, {"id": "pain", "type": "yesno", "text": "眼睛會不會痛、怕光？"}], "also": ["Blurred vision", "Keratitis"], "trigger_only": true, "note": "⚠️ tisotumab vedotin 與 mirvetuximab 有眼毒性黑框警示。但這三個眼科詞條的第二三級都要矯正視力,問卷定不了級,工作是觸發眼科轉診。乾眼第一級的『點人工淚液會好』是病人答得出來的唯一一格。"}, {"id": "mouth", "label": "嘴巴破", "icon": "👄", "organ": "口腔", "term": "Mucositis oral", "class": "adc", "q": [{"id": "sore", "type": "choice", "text": "嘴巴破或痛的程度？", "opts": ["不會", "有一點,照常吃", "痛到只能吃軟的或流質", "痛到吃不下"]}]}], "hard_red_flags": [{"id": "sjs", "when": "rash.blister", "text": "皮膚起水泡、脫皮或黏膜破損,需排除 Stevens-Johnson 症候群", "level": "today"}, {"id": "dyspnea_rest", "when": "breath.exertion>=3", "text": "休息時也會喘", "level": "today"}, {"id": "ild_new", "when": "breath.new_worse && breath.exertion>=1", "text": "治療後新出現或加重的咳嗽或喘,需排除間質性肺病", "level": "today"}, {"id": "chest", "when": "cardiac.chest || cardiac.palpitation", "text": "胸悶、胸痛或心悸,需排除心肌炎", "level": "today"}, {"id": "myositis", "when": "joint.weak && (cardiac.chest || cardiac.palpitation)", "text": "肌肉無力合併心臟症狀,需一併排除肌炎與心肌炎", "level": "today"}, {"id": "blood_stool", "when": "diarrhea.blood", "text": "血便或黏液便", "level": "today"}, {"id": "diarrhea_7", "when": "diarrhea.delta>=7", "text": "腹瀉比平常多 7 次以上", "level": "today"}, {"id": "fever_high", "when": "fever.temp>=39", "text": "發燒超過 39 度", "level": "today"}, {"id": "adrenal", "when": "endo.dizzy && fatigue.rest==1", "text": "姿勢性頭暈合併休息無法緩解的疲倦,需排除腎上腺功能不全", "level": "today"}, {"id": "eye_pain", "when": "eye_io.pain || eye_io.photophobia || eye_adc.pain", "text": "眼睛痛或畏光,需眼科評估", "level": "today"}, {"id": "selfcare", "when": "adl_s", "text": "已經影響到自己洗澡穿衣吃飯上廁所", "level": "today"}, {"id": "free_text", "when": "cc.nonempty", "text": "病人有自己想說的話,結構題可能沒接住", "level": "read"}]}, "scope": "all", "window_h": 48, "counts": {"active": 8, "open": 8, "all": 8}, "rows": [{"id": 8, "mrn": "99000008", "name": "示範八號", "drug_class": "adc", "ts": "2026-09-18 15:46", "filled_by": "self", "visit_id": "demo07", "ctcae_version": "6.0", "answers": {"fatigue": {"present": 0}, "fever": {"present": 0}, "diarrhea": {"baseline": 1, "now": 1, "consistency": 0, "blood": 0, "abd_pain": 0}, "breath": {"exertion": 0, "cough": 0, "new_worse": 0}, "rash": {"present": 1, "symptom": 1, "blister": 0, "bsa": 12}, "itch": {"present": 0}, "nausea": {"appetite": 0, "nausea": 0}, "joint": {"joint": 0, "muscle": 0, "weak": 0}, "endo": {"cold_heat": 0, "dizzy": 0, "thirst": 0}, "cardiac": {"chest": 0, "palpitation": 0, "swelling": 0}, "eye_io": {"pain": 0, "photophobia": 0, "vision": 0}, "adl_i": 0, "adl_i_by": [], "adl_s": 0, "adl_s_by": [], "eye_adc": {"dry": 2, "blur": 1, "pain": 0}, "cc": {"text": "眼睛乾乾的，看東西有點糊"}}, "flags": {"today": [], "read": [{"id": "free_text", "text": "病人有自己想說的話,結構題可能沒接住"}], "unknown": [{"id": "fever_high", "text": "發燒超過 39 度"}]}, "media_failed": [], "layer2": null, "layer3": null, "envelope": {"determinable": [], "floor_only": [{"term": "Rash maculo-papular", "floor": 2, "ceiling": 4, "basis_text": "Mild symptoms", "missing": ["視診確認型態與分布"], "note": "", "soc": "皮膚", "actionable": true}], "cannot_grade": [{"term": "Mucositis oral", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Peripheral motor neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Diarrhea", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["是否需要靜脈輸液或住院(病人無法判斷)", "歸因:免疫性腸炎、感染、藥物或疾病本身"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Colitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["內視鏡或影像 —— Colitis 第一級在定義上是無症狀、僅有檢查發現,問卷無法排除"], "note": "病人否認腹痛與血便,但這不能排除 Colitis:其第一級定義即為無症狀。", "soc": "腸胃", "actionable": false}, {"term": "Pneumonitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["胸部影像(必要) —— Pneumonitis 第一級定義為無症狀、僅有影像發現"], "note": "即使病人完全無症狀,也不能排除 Pneumonitis —— 其第一級定義即為無症狀。", "soc": "肺", "actionable": false}, {"term": "Peripheral sensory neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Thyroiditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺功能與相關內分泌抽血(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Thyroiditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Adrenal insufficiency", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["皮質醇與促腎上腺皮質素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Adrenal insufficiency 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Myocarditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["心電圖、心肌旋轉蛋白與心臟超音波(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myocarditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "心臟", "actionable": false}, {"term": "Uveitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈檢查(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Uveitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Dry eye", "floor": 0, "ceiling": 3, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人回報眼睛乾澀或視力模糊,觸發條件成立但無法定級。", "soc": "眼睛", "actionable": true}, {"term": "Blurred vision", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人回報視力模糊,觸發條件成立但無法定級。", "soc": "眼睛", "actionable": true}, {"term": "Keratitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈與角膜染色(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人回報眼睛痛或乾澀,觸發條件成立但無法定級。", "soc": "眼睛", "actionable": true}, {"term": "Myositis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["肌酸激酶與醛縮酶,必要時肌電圖(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myositis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "肌肉骨骼", "actionable": false}, {"term": "Hypothyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypothyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hyperthyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hyperthyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hypophysitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["腦下垂體軸抽血,必要時腦部影像(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypophysitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}], "triggers": ["建議安排眼科檢查含矯正視力", "建議安排眼科裂隙燈與角膜染色"]}, "reviewed": false, "confirmed": false, "unfilled": ["手腳麻、沒力", "嘴巴破"], "triage": {"level": "act", "n_grade": 1, "why": ["1 項證據已達 G2 以上", "建議安排檢查"]}, "cc_brief": "眼睛乾乾的，看東西有點糊"}, {"id": 7, "mrn": "99000007", "name": "示範七號", "drug_class": "io", "ts": "2026-09-18 15:46", "filled_by": "self", "visit_id": "demo06", "ctcae_version": "6.0", "answers": {"fatigue": {"present": 1, "rest": 1}, "fever": {"present": 1, "temp": 39.4}, "diarrhea": {"baseline": 1, "now": 9, "consistency": 1, "blood": 1, "abd_pain": 1}, "breath": {"exertion": 0, "cough": 0, "new_worse": 0}, "rash": {"present": 0}, "itch": {"present": 0}, "nausea": {"appetite": 0, "nausea": 0}, "joint": {"joint": 0, "muscle": 0, "weak": 0}, "endo": {"cold_heat": 0, "dizzy": 0, "thirst": 0}, "cardiac": {"chest": 0, "palpitation": 0, "swelling": 0}, "eye_io": {"pain": 0, "photophobia": 0, "vision": 0}, "adl_i": 0, "adl_i_by": [], "adl_s": 1, "adl_s_by": ["diarrhea"], "cc": {"text": ""}}, "flags": {"today": [{"id": "blood_stool", "text": "血便或黏液便"}, {"id": "diarrhea_7", "text": "腹瀉比平常多 7 次以上"}, {"id": "fever_high", "text": "發燒超過 39 度"}, {"id": "selfcare", "text": "已經影響到自己洗澡穿衣吃飯上廁所"}], "read": [], "unknown": [{"id": "sjs", "text": "皮膚起水泡、脫皮或黏膜破損,需排除 Stevens-Johnson 症候群"}, {"id": "eye_pain", "text": "眼睛痛或畏光,需眼科評估"}]}, "media_failed": [], "layer2": null, "layer3": null, "envelope": {"determinable": [{"term": "Fatigue", "floor": 2, "ceiling": 2, "basis_text": "Fatigue not relieved by rest; limiting instrumental ADL or mild/moderate impact on age-appropriate normal daily activity (pediatric)", "missing": [], "note": "", "soc": "全身", "actionable": true}, {"term": "Fever", "floor": 2, "ceiling": 2, "basis_text": ">39.0 - 40.0 degrees C (102.3 - 104.0 degrees F)", "missing": ["白血球/嗜中性球數值(發燒性嗜中性球低下為另一詞條 Febrile neutropenia)"], "note": "", "soc": "全身", "actionable": true}], "floor_only": [{"term": "Diarrhea", "floor": 3, "ceiling": 4, "basis_text": "Increase of >=7 stools per day over baseline; hospitalization indicated; severe increase in ostomy output compared to baseline; requires IV intervention; limiting self-care ADL or severe impact on age-appropriate normal daily activity (pediatric)", "missing": ["是否需要靜脈輸液或住院(病人無法判斷)", "歸因:免疫性腸炎、感染、藥物或疾病本身"], "note": "", "soc": "腸胃", "actionable": true}, {"term": "Colitis", "floor": 2, "ceiling": 4, "basis_text": "Abdominal pain; mucus or blood in stool", "missing": ["歸因:免疫性腸炎或感染性腸炎"], "note": "", "soc": "腸胃", "actionable": true}], "cannot_grade": [{"term": "Mucositis oral", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Peripheral motor neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Pneumonitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["胸部影像(必要) —— Pneumonitis 第一級定義為無症狀、僅有影像發現"], "note": "即使病人完全無症狀,也不能排除 Pneumonitis —— 其第一級定義即為無症狀。", "soc": "肺", "actionable": false}, {"term": "Rash maculo-papular", "floor": 0, "ceiling": 1, "basis_text": "", "missing": ["視診 —— 第一級定義為無症狀,病人未必自覺"], "note": "", "soc": "皮膚", "actionable": false}, {"term": "Peripheral sensory neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Thyroiditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺功能與相關內分泌抽血(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Thyroiditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Adrenal insufficiency", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["皮質醇與促腎上腺皮質素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Adrenal insufficiency 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Myocarditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["心電圖、心肌旋轉蛋白與心臟超音波(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myocarditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "心臟", "actionable": false}, {"term": "Uveitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈檢查(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Uveitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Dry eye", "floor": 0, "ceiling": 3, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Dry eye 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Blurred vision", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Blurred vision 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Keratitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈與角膜染色(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Keratitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Myositis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["肌酸激酶與醛縮酶,必要時肌電圖(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myositis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "肌肉骨骼", "actionable": false}, {"term": "Hypothyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypothyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hyperthyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hyperthyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hypophysitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["腦下垂體軸抽血,必要時腦部影像(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypophysitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}], "triggers": ["糞便檢查含困難梭菌", "考慮腸道影像或內視鏡"]}, "reviewed": false, "confirmed": false, "unfilled": [], "triage": {"level": "red", "n_grade": 4, "why": ["血便或黏液便", "腹瀉比平常多 7 次以上", "發燒超過 39 度", "已經影響到自己洗澡穿衣吃飯上廁所"]}, "cc_brief": ""}, {"id": 6, "mrn": "99000006", "name": "示範六號", "drug_class": "both", "ts": "2026-09-18 15:46", "filled_by": "self", "visit_id": "demo05", "ctcae_version": "6.0", "answers": {"fatigue": {"present": 1, "rest": 1}, "fever": {"present": 0}, "diarrhea": {"baseline": 1, "now": 1, "consistency": 0, "blood": 0, "abd_pain": 0}, "breath": {"exertion": 2, "cough": 2, "new_worse": 1}, "rash": {"present": 0}, "itch": {"present": 0}, "nausea": {"appetite": 0, "nausea": 0}, "joint": {"joint": 0, "muscle": 0, "weak": 0}, "endo": {"cold_heat": 0, "dizzy": 0, "thirst": 0}, "cardiac": {"chest": 0, "palpitation": 0, "swelling": 0}, "eye_io": {"pain": 0, "photophobia": 0, "vision": 0}, "adl_i": 0, "adl_i_by": [], "adl_s": 0, "adl_s_by": [], "cc": {"text": "這兩天喘得比較厲害，走平路就要停"}}, "flags": {"today": [{"id": "ild_new", "text": "治療後新出現或加重的咳嗽或喘,需排除間質性肺病"}], "read": [{"id": "free_text", "text": "病人有自己想說的話,結構題可能沒接住"}], "unknown": [{"id": "sjs", "text": "皮膚起水泡、脫皮或黏膜破損,需排除 Stevens-Johnson 症候群"}, {"id": "fever_high", "text": "發燒超過 39 度"}, {"id": "eye_pain", "text": "眼睛痛或畏光,需眼科評估"}]}, "media_failed": [], "layer2": null, "layer3": null, "envelope": {"determinable": [{"term": "Fatigue", "floor": 2, "ceiling": 2, "basis_text": "Fatigue not relieved by rest; limiting instrumental ADL or mild/moderate impact on age-appropriate normal daily activity (pediatric)", "missing": [], "note": "", "soc": "全身", "actionable": true}], "floor_only": [{"term": "Cough", "floor": 2, "ceiling": 3, "basis_text": "Moderate symptoms, medical intervention indicated; limiting instrumental ADL or mild/moderate impact on age-appropriate normal daily activity (pediatric)", "missing": [], "note": "", "soc": "肺", "actionable": true}, {"term": "Dyspnea", "floor": 2, "ceiling": 4, "basis_text": "Shortness of breath with minimal exertion; limiting instrumental ADL or mild/moderate impact on age-appropriate normal daily activity (pediatric)", "missing": ["胸部影像 —— 若為治療相關肺炎,應改記 Pneumonitis 詞條而非 Dyspnea"], "note": "", "soc": "肺", "actionable": true}], "cannot_grade": [{"term": "Mucositis oral", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Peripheral motor neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Diarrhea", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["是否需要靜脈輸液或住院(病人無法判斷)", "歸因:免疫性腸炎、感染、藥物或疾病本身"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Colitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["內視鏡或影像 —— Colitis 第一級在定義上是無症狀、僅有檢查發現,問卷無法排除"], "note": "病人否認腹痛與血便,但這不能排除 Colitis:其第一級定義即為無症狀。", "soc": "腸胃", "actionable": false}, {"term": "Pneumonitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["胸部影像(必要) —— Pneumonitis 第一級定義為無症狀、僅有影像發現"], "note": "治療後新發生或加重的咳嗽/喘。分級需影像,但觸發條件已成立。", "soc": "肺", "actionable": true}, {"term": "Rash maculo-papular", "floor": 0, "ceiling": 1, "basis_text": "", "missing": ["視診 —— 第一級定義為無症狀,病人未必自覺"], "note": "", "soc": "皮膚", "actionable": false}, {"term": "Peripheral sensory neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Thyroiditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺功能與相關內分泌抽血(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Thyroiditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Adrenal insufficiency", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["皮質醇與促腎上腺皮質素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Adrenal insufficiency 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Myocarditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["心電圖、心肌旋轉蛋白與心臟超音波(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myocarditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "心臟", "actionable": false}, {"term": "Uveitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈檢查(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Uveitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Dry eye", "floor": 0, "ceiling": 3, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Dry eye 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Blurred vision", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Blurred vision 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Keratitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈與角膜染色(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Keratitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Myositis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["肌酸激酶與醛縮酶,必要時肌電圖(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myositis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "肌肉骨骼", "actionable": false}, {"term": "Hypothyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypothyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hyperthyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hyperthyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hypophysitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["腦下垂體軸抽血,必要時腦部影像(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypophysitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}], "triggers": ["建議安排胸部影像", "若使用 T-DXd,仿單對任何等級的間質性肺病均要求停藥"]}, "reviewed": false, "confirmed": false, "unfilled": [], "triage": {"level": "red", "n_grade": 3, "why": ["治療後新出現或加重的咳嗽或喘,需排除間質性肺病"]}, "cc_brief": "這兩天喘得比較厲害，走平路就要停"}, {"id": 5, "mrn": "99000005", "name": "示範五號", "drug_class": "io", "ts": "2026-09-18 15:46", "filled_by": "self", "visit_id": "demo04", "ctcae_version": "6.0", "answers": {"fatigue": {"present": 1, "rest": 1}, "fever": {"present": 0}, "diarrhea": {"baseline": 1, "now": 1, "consistency": 0, "blood": 0, "abd_pain": 0}, "breath": {"exertion": 0, "cough": 0, "new_worse": 0}, "rash": {"present": 0}, "itch": {"present": 0}, "nausea": {"appetite": 0, "nausea": 0}, "joint": {"joint": 1, "muscle": 2, "weak": 1}, "endo": {"cold_heat": 0, "dizzy": 0, "thirst": 0}, "cardiac": {"chest": 0, "palpitation": 0, "swelling": 0}, "eye_io": {"pain": 0, "photophobia": 0, "vision": 0}, "adl_i": 0, "adl_i_by": [], "adl_s": 0, "adl_s_by": [], "cc": {"text": "我先生說我最近講話大舌頭，眼皮也一直垂下來"}}, "flags": {"today": [], "read": [{"id": "free_text", "text": "病人有自己想說的話,結構題可能沒接住"}], "unknown": [{"id": "sjs", "text": "皮膚起水泡、脫皮或黏膜破損,需排除 Stevens-Johnson 症候群"}, {"id": "fever_high", "text": "發燒超過 39 度"}, {"id": "eye_pain", "text": "眼睛痛或畏光,需眼科評估"}]}, "media_failed": [], "layer2": {"who": "陳個管", "ts": "2026-09-18 15:47", "note": "已電話聯絡。病人描述像眼瞼下垂且傍晚加重，已請她回診時直接跟醫師說。", "contacted": true, "urgency": "priority", "terms": ["Myasthenia gravis", "Myositis"], "suggest": {"Fatigue": "2", "Myalgia": "2"}}, "layer3": null, "envelope": {"determinable": [{"term": "Fatigue", "floor": 2, "ceiling": 2, "basis_text": "Fatigue not relieved by rest; limiting instrumental ADL or mild/moderate impact on age-appropriate normal daily activity (pediatric)", "missing": [], "note": "", "soc": "全身", "actionable": true}], "floor_only": [{"term": "Myalgia", "floor": 2, "ceiling": 3, "basis_text": "Moderate pain; limiting instrumental ADL or mild/moderate impact on age-appropriate normal daily activity (pediatric)", "missing": [], "note": "病人回報肌肉無力時一併拉高:免疫治療肌炎不可只當成痠痛。", "soc": "肌肉骨骼", "actionable": true}, {"term": "Arthralgia", "floor": 1, "ceiling": 3, "basis_text": "Mild pain", "missing": [], "note": "", "soc": "肌肉骨骼", "actionable": true}], "cannot_grade": [{"term": "Mucositis oral", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Peripheral motor neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Diarrhea", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["是否需要靜脈輸液或住院(病人無法判斷)", "歸因:免疫性腸炎、感染、藥物或疾病本身"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Colitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["內視鏡或影像 —— Colitis 第一級在定義上是無症狀、僅有檢查發現,問卷無法排除"], "note": "病人否認腹痛與血便,但這不能排除 Colitis:其第一級定義即為無症狀。", "soc": "腸胃", "actionable": false}, {"term": "Pneumonitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["胸部影像(必要) —— Pneumonitis 第一級定義為無症狀、僅有影像發現"], "note": "即使病人完全無症狀,也不能排除 Pneumonitis —— 其第一級定義即為無症狀。", "soc": "肺", "actionable": false}, {"term": "Rash maculo-papular", "floor": 0, "ceiling": 1, "basis_text": "", "missing": ["視診 —— 第一級定義為無症狀,病人未必自覺"], "note": "", "soc": "皮膚", "actionable": false}, {"term": "Peripheral sensory neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Thyroiditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺功能與相關內分泌抽血(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Thyroiditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Adrenal insufficiency", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["皮質醇與促腎上腺皮質素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Adrenal insufficiency 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Myocarditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["心電圖、心肌旋轉蛋白與心臟超音波(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myocarditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "心臟", "actionable": false}, {"term": "Uveitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈檢查(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Uveitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Dry eye", "floor": 0, "ceiling": 3, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Dry eye 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Blurred vision", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Blurred vision 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Keratitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈與角膜染色(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Keratitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Myositis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["肌酸激酶與醛縮酶,必要時肌電圖(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人回報肌肉無力,觸發條件成立但無法定級。", "soc": "肌肉骨骼", "actionable": true}, {"term": "Hypothyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypothyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hyperthyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hyperthyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hypophysitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["腦下垂體軸抽血,必要時腦部影像(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypophysitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}], "triggers": ["建議安排肌酸激酶與醛縮酶,必要時肌電圖"]}, "reviewed": true, "confirmed": false, "unfilled": [], "triage": {"level": "act", "n_grade": 2, "why": ["2 項證據已達 G2 以上", "建議安排檢查"]}, "cc_brief": "我先生說我最近講話大舌頭，眼皮也一直垂下來"}, {"id": 4, "mrn": "99000004", "name": "示範四號", "drug_class": "io", "ts": "2026-09-18 15:46", "filled_by": "self", "visit_id": "demo03", "ctcae_version": "6.0", "answers": {"fatigue": {"present": 1, "rest": 1}, "fever": {"present": 0}, "diarrhea": {"baseline": 1, "now": 5, "consistency": 1, "blood": 0, "abd_pain": 0}, "breath": {"exertion": 0, "cough": 0, "new_worse": 0}, "rash": {"present": 0}, "itch": {"present": 0}, "nausea": {"appetite": 0, "nausea": 0}, "joint": {"joint": 0, "muscle": 0, "weak": 0}, "endo": {"cold_heat": 0, "dizzy": 0, "thirst": 0}, "cardiac": {"chest": 0, "palpitation": 0, "swelling": 0}, "eye_io": {"pain": 0, "photophobia": 0, "vision": 0}, "adl_i": 1, "adl_i_by": ["fatigue", "diarrhea"], "adl_s": 0, "adl_s_by": [], "cc": {"text": ""}}, "flags": {"today": [], "read": [], "unknown": [{"id": "sjs", "text": "皮膚起水泡、脫皮或黏膜破損,需排除 Stevens-Johnson 症候群"}, {"id": "fever_high", "text": "發燒超過 39 度"}, {"id": "eye_pain", "text": "眼睛痛或畏光,需眼科評估"}]}, "media_failed": [], "layer2": null, "layer3": null, "envelope": {"determinable": [{"term": "Fatigue", "floor": 2, "ceiling": 2, "basis_text": "Fatigue not relieved by rest; limiting instrumental ADL or mild/moderate impact on age-appropriate normal daily activity (pediatric)", "missing": [], "note": "", "soc": "全身", "actionable": true}], "floor_only": [{"term": "Diarrhea", "floor": 2, "ceiling": 4, "basis_text": "Increase of 4 - 6 stools per day over baseline; moderate increase in ostomy output compared to baseline; limiting instrumental ADL or mild/moderate impact on age-appropriate normal daily activity (pediatric); change in consistency or frequency AND limiting instrumental ADL or mild/moderate impact on age-appropriate normal daily activity (pediatric)", "missing": ["是否需要靜脈輸液或住院(病人無法判斷)", "歸因:免疫性腸炎、感染、藥物或疾病本身"], "note": "", "soc": "腸胃", "actionable": true}], "cannot_grade": [{"term": "Mucositis oral", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Peripheral motor neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Colitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["內視鏡或影像 —— Colitis 第一級在定義上是無症狀、僅有檢查發現,問卷無法排除"], "note": "病人否認腹痛與血便,但這不能排除 Colitis:其第一級定義即為無症狀。", "soc": "腸胃", "actionable": false}, {"term": "Pneumonitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["胸部影像(必要) —— Pneumonitis 第一級定義為無症狀、僅有影像發現"], "note": "即使病人完全無症狀,也不能排除 Pneumonitis —— 其第一級定義即為無症狀。", "soc": "肺", "actionable": false}, {"term": "Rash maculo-papular", "floor": 0, "ceiling": 1, "basis_text": "", "missing": ["視診 —— 第一級定義為無症狀,病人未必自覺"], "note": "", "soc": "皮膚", "actionable": false}, {"term": "Peripheral sensory neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Thyroiditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺功能與相關內分泌抽血(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Thyroiditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Adrenal insufficiency", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["皮質醇與促腎上腺皮質素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Adrenal insufficiency 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Myocarditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["心電圖、心肌旋轉蛋白與心臟超音波(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myocarditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "心臟", "actionable": false}, {"term": "Uveitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈檢查(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Uveitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Dry eye", "floor": 0, "ceiling": 3, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Dry eye 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Blurred vision", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Blurred vision 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Keratitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈與角膜染色(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Keratitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Myositis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["肌酸激酶與醛縮酶,必要時肌電圖(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myositis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "肌肉骨骼", "actionable": false}, {"term": "Hypothyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypothyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hyperthyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hyperthyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hypophysitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["腦下垂體軸抽血,必要時腦部影像(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypophysitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}], "triggers": []}, "reviewed": false, "confirmed": false, "unfilled": [], "triage": {"level": "act", "n_grade": 2, "why": ["2 項證據已達 G2 以上"]}, "cc_brief": ""}, {"id": 3, "mrn": "99000003", "name": "示範三號", "drug_class": "adc", "ts": "2026-09-18 15:46", "filled_by": "self", "visit_id": "demo02", "ctcae_version": "6.0", "answers": {"fatigue": {"present": 1, "rest": 0}, "fever": {"present": 0}, "diarrhea": {"baseline": 1, "now": 1, "consistency": 0, "blood": 0, "abd_pain": 0}, "breath": {"exertion": 0, "cough": 0, "new_worse": 0}, "rash": {"present": 0}, "itch": {"present": 0}, "nausea": {"appetite": 0, "nausea": 0}, "joint": {"joint": 0, "muscle": 0, "weak": 0}, "endo": {"cold_heat": 0, "dizzy": 0, "thirst": 0}, "cardiac": {"chest": 0, "palpitation": 0, "swelling": 0}, "eye_io": {"pain": 0, "photophobia": 0, "vision": 0}, "adl_i": 0, "adl_i_by": [], "adl_s": 0, "adl_s_by": [], "neuro": {"sensory": 2, "button": 1, "motor": 1}, "cc": {"text": "手指比較不靈活，扣釦子有點慢"}}, "flags": {"today": [], "read": [{"id": "free_text", "text": "病人有自己想說的話,結構題可能沒接住"}], "unknown": [{"id": "sjs", "text": "皮膚起水泡、脫皮或黏膜破損,需排除 Stevens-Johnson 症候群"}, {"id": "fever_high", "text": "發燒超過 39 度"}, {"id": "eye_pain", "text": "眼睛痛或畏光,需眼科評估"}]}, "media_failed": [], "layer2": null, "layer3": null, "envelope": {"determinable": [{"term": "Fatigue", "floor": 1, "ceiling": 1, "basis_text": "Fatigue relieved by rest", "missing": [], "note": "", "soc": "全身", "actionable": true}], "floor_only": [{"term": "Peripheral sensory neuropathy", "floor": 2, "ceiling": 4, "basis_text": "Moderate symptoms; limiting instrumental ADL or mild/moderate impact on age-appropriate normal daily activity (pediatric)", "missing": [], "note": "", "soc": "神經", "actionable": true}, {"term": "Peripheral motor neuropathy", "floor": 1, "ceiling": 4, "basis_text": "Mild symptoms; clinical or diagnostic observations only", "missing": [], "note": "", "soc": "神經", "actionable": true}], "cannot_grade": [{"term": "Mucositis oral", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Diarrhea", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["是否需要靜脈輸液或住院(病人無法判斷)", "歸因:免疫性腸炎、感染、藥物或疾病本身"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Colitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["內視鏡或影像 —— Colitis 第一級在定義上是無症狀、僅有檢查發現,問卷無法排除"], "note": "病人否認腹痛與血便,但這不能排除 Colitis:其第一級定義即為無症狀。", "soc": "腸胃", "actionable": false}, {"term": "Pneumonitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["胸部影像(必要) —— Pneumonitis 第一級定義為無症狀、僅有影像發現"], "note": "即使病人完全無症狀,也不能排除 Pneumonitis —— 其第一級定義即為無症狀。", "soc": "肺", "actionable": false}, {"term": "Rash maculo-papular", "floor": 0, "ceiling": 1, "basis_text": "", "missing": ["視診 —— 第一級定義為無症狀,病人未必自覺"], "note": "", "soc": "皮膚", "actionable": false}, {"term": "Thyroiditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺功能與相關內分泌抽血(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Thyroiditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Adrenal insufficiency", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["皮質醇與促腎上腺皮質素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Adrenal insufficiency 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Myocarditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["心電圖、心肌旋轉蛋白與心臟超音波(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myocarditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "心臟", "actionable": false}, {"term": "Uveitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈檢查(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Uveitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Dry eye", "floor": 0, "ceiling": 3, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Dry eye 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Blurred vision", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Blurred vision 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Keratitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈與角膜染色(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Keratitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Myositis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["肌酸激酶與醛縮酶,必要時肌電圖(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myositis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "肌肉骨骼", "actionable": false}, {"term": "Hypothyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypothyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hyperthyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hyperthyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hypophysitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["腦下垂體軸抽血,必要時腦部影像(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypophysitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}], "triggers": []}, "reviewed": false, "confirmed": false, "unfilled": ["眼睛乾、視力模糊", "嘴巴破"], "triage": {"level": "act", "n_grade": 1, "why": ["1 項證據已達 G2 以上"]}, "cc_brief": "手指比較不靈活，扣釦子有點慢"}, {"id": 2, "mrn": "99000002", "name": "示範二號", "drug_class": "io", "ts": "2026-09-18 15:46", "filled_by": "self", "visit_id": "demo01", "ctcae_version": "6.0", "answers": {"fatigue": {"present": 1, "rest": 0}, "fever": {"present": 0}, "diarrhea": {"baseline": 1, "now": 1, "consistency": 0, "blood": 0, "abd_pain": 0}, "breath": {"exertion": 0, "cough": 0, "new_worse": 0}, "rash": {"present": 0}, "itch": {"present": 0}, "nausea": {"appetite": 0, "nausea": 0}, "joint": {"joint": 1, "muscle": 0, "weak": 0}, "endo": {"cold_heat": 0, "dizzy": 0, "thirst": 0}, "cardiac": {"chest": 0, "palpitation": 0, "swelling": 0}, "eye_io": {"pain": 0, "photophobia": 0, "vision": 0}, "adl_i": 0, "adl_i_by": [], "adl_s": 0, "adl_s_by": [], "cc": {"text": ""}}, "flags": {"today": [], "read": [], "unknown": [{"id": "sjs", "text": "皮膚起水泡、脫皮或黏膜破損,需排除 Stevens-Johnson 症候群"}, {"id": "fever_high", "text": "發燒超過 39 度"}, {"id": "eye_pain", "text": "眼睛痛或畏光,需眼科評估"}]}, "media_failed": [], "layer2": null, "layer3": null, "envelope": {"determinable": [{"term": "Fatigue", "floor": 1, "ceiling": 1, "basis_text": "Fatigue relieved by rest", "missing": [], "note": "", "soc": "全身", "actionable": true}], "floor_only": [{"term": "Arthralgia", "floor": 1, "ceiling": 3, "basis_text": "Mild pain", "missing": [], "note": "", "soc": "肌肉骨骼", "actionable": true}], "cannot_grade": [{"term": "Mucositis oral", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Peripheral motor neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Diarrhea", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["是否需要靜脈輸液或住院(病人無法判斷)", "歸因:免疫性腸炎、感染、藥物或疾病本身"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Colitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["內視鏡或影像 —— Colitis 第一級在定義上是無症狀、僅有檢查發現,問卷無法排除"], "note": "病人否認腹痛與血便,但這不能排除 Colitis:其第一級定義即為無症狀。", "soc": "腸胃", "actionable": false}, {"term": "Pneumonitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["胸部影像(必要) —— Pneumonitis 第一級定義為無症狀、僅有影像發現"], "note": "即使病人完全無症狀,也不能排除 Pneumonitis —— 其第一級定義即為無症狀。", "soc": "肺", "actionable": false}, {"term": "Rash maculo-papular", "floor": 0, "ceiling": 1, "basis_text": "", "missing": ["視診 —— 第一級定義為無症狀,病人未必自覺"], "note": "", "soc": "皮膚", "actionable": false}, {"term": "Peripheral sensory neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Thyroiditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺功能與相關內分泌抽血(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Thyroiditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Adrenal insufficiency", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["皮質醇與促腎上腺皮質素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Adrenal insufficiency 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Myocarditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["心電圖、心肌旋轉蛋白與心臟超音波(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myocarditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "心臟", "actionable": false}, {"term": "Uveitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈檢查(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Uveitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Dry eye", "floor": 0, "ceiling": 3, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Dry eye 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Blurred vision", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Blurred vision 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Keratitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈與角膜染色(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Keratitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Myositis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["肌酸激酶與醛縮酶,必要時肌電圖(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myositis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "肌肉骨骼", "actionable": false}, {"term": "Hypothyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypothyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hyperthyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hyperthyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hypophysitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["腦下垂體軸抽血,必要時腦部影像(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypophysitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}], "triggers": []}, "reviewed": false, "confirmed": false, "unfilled": [], "triage": {"level": "skip", "n_grade": 0, "why": []}, "cc_brief": ""}, {"id": 1, "mrn": "99000001", "name": "示範一號", "drug_class": "io", "ts": "2026-09-18 15:46", "filled_by": "self", "visit_id": "demo00", "ctcae_version": "6.0", "answers": {"fatigue": {"present": 0}, "fever": {"present": 0}, "diarrhea": {"baseline": 1, "now": 1, "consistency": 0, "blood": 0, "abd_pain": 0}, "breath": {"exertion": 0, "cough": 0, "new_worse": 0}, "rash": {"present": 0}, "itch": {"present": 0}, "nausea": {"appetite": 0, "nausea": 0}, "joint": {"joint": 0, "muscle": 0, "weak": 0}, "endo": {"cold_heat": 0, "dizzy": 0, "thirst": 0}, "cardiac": {"chest": 0, "palpitation": 0, "swelling": 0}, "eye_io": {"pain": 0, "photophobia": 0, "vision": 0}, "adl_i": 0, "adl_i_by": [], "adl_s": 0, "adl_s_by": [], "cc": {"text": ""}}, "flags": {"today": [], "read": [], "unknown": [{"id": "sjs", "text": "皮膚起水泡、脫皮或黏膜破損,需排除 Stevens-Johnson 症候群"}, {"id": "fever_high", "text": "發燒超過 39 度"}, {"id": "eye_pain", "text": "眼睛痛或畏光,需眼科評估"}]}, "media_failed": [], "layer2": null, "layer3": null, "envelope": {"determinable": [], "floor_only": [], "cannot_grade": [{"term": "Mucositis oral", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Peripheral motor neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Diarrhea", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["是否需要靜脈輸液或住院(病人無法判斷)", "歸因:免疫性腸炎、感染、藥物或疾病本身"], "note": "", "soc": "腸胃", "actionable": false}, {"term": "Colitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["內視鏡或影像 —— Colitis 第一級在定義上是無症狀、僅有檢查發現,問卷無法排除"], "note": "病人否認腹痛與血便,但這不能排除 Colitis:其第一級定義即為無症狀。", "soc": "腸胃", "actionable": false}, {"term": "Pneumonitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["胸部影像(必要) —— Pneumonitis 第一級定義為無症狀、僅有影像發現"], "note": "即使病人完全無症狀,也不能排除 Pneumonitis —— 其第一級定義即為無症狀。", "soc": "肺", "actionable": false}, {"term": "Rash maculo-papular", "floor": 0, "ceiling": 1, "basis_text": "", "missing": ["視診 —— 第一級定義為無症狀,病人未必自覺"], "note": "", "soc": "皮膚", "actionable": false}, {"term": "Peripheral sensory neuropathy", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["病人未填此題"], "note": "", "soc": "神經", "actionable": false}, {"term": "Thyroiditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺功能與相關內分泌抽血(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Thyroiditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Adrenal insufficiency", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["皮質醇與促腎上腺皮質素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Adrenal insufficiency 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Myocarditis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["心電圖、心肌旋轉蛋白與心臟超音波(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myocarditis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "心臟", "actionable": false}, {"term": "Uveitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈檢查(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Uveitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Dry eye", "floor": 0, "ceiling": 3, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Dry eye 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Blurred vision", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科檢查含矯正視力(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Blurred vision 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Keratitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["眼科裂隙燈與角膜染色(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Keratitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "眼睛", "actionable": false}, {"term": "Myositis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["肌酸激酶與醛縮酶,必要時肌電圖(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Myositis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "肌肉骨骼", "actionable": false}, {"term": "Hypothyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypothyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hyperthyroidism", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["甲狀腺刺激素與游離甲狀腺素(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hyperthyroidism 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}, {"term": "Hypophysitis", "floor": 0, "ceiling": 4, "basis_text": "", "missing": ["腦下垂體軸抽血,必要時腦部影像(必要) —— 此詞條的分級由檢查定義,問卷無法定級"], "note": "病人未回報相關症狀,但Hypophysitis 的低分級可為無症狀或僅檢查異常,問卷無法排除。", "soc": "內分泌", "actionable": false}], "triggers": []}, "reviewed": false, "confirmed": false, "unfilled": [], "triage": {"level": "skip", "n_grade": 0, "why": []}, "cc_brief": ""}]};</script>
+
+
+<header class="hid" id="hd"><h1>診間交接</h1><span class="badge" style="background:#fdf7e9;color:#6f4f0c">靜態示範・資料全部虛構</span><span class="badge" id="cnt">0</span>
+ <span class="sp"><span id="who"></span>
+ <span class="badge" id="cv">CTCAE —</span>
+ <button class="hbtn" id="btnR">重新整理</button>
+ <button class="hbtn" id="btnOut">登出</button></span></header>
+
+<div id="login" class="card">
+  <h2>醫師端</h2>
+  <input class="f" id="lname" placeholder="您的姓名（會記錄為判定者）">
+  <input class="f" id="lcode" placeholder="醫師代碼" type="password">
+  <button class="btn" id="btnIn" style="width:100%">登入</button>
+  <p class="foot" id="lmsg"></p>
+</div>
+
+<div class="wrap hid" id="app">
+  <div class="card" style="background:#fdf7e9;border-color:#e3d2a4"><b>這是介面示範。</b>八位病人全部虛構，涵蓋各種分流情境：兩位免開、四位需給級、兩位紅旗。點任一列看明細；鍵盤 <b>j</b>/<b>k</b> 換病人、<b>↑</b>/<b>↓</b> 換項目、<b>0</b>–<b>4</b> 給級、<b>i</b> 看 CTCAE 原文。按「確認並記錄」不會儲存。</div>
+  <div class="card"><h2>今日候診名單</h2><div id="lbar" class="lbar"></div><table id="tbl"></table></div>
+  <div id="detail"></div>
+</div>
+<div id="toast"></div>
+
+<script>
+/* =====================================================================
+   醫師端交接畫面。成敗在這一頁,不能增加醫師工作量。
+   第一眼只給四個框:看診時優先處理 / 要注意 / 判不出來 / 病人自己說的話。
+   ★ 自由文字必定出現在最上層,絕不可落進預設收合的區域 ——
+     它存在的唯一原因就是結構題沒接住某件事,收起來等於沒加。
+   ★ 所有分級鈕一律虛線未確認。系統與個管師的值都只是參考。
+   ===================================================================== */
+var SESS=null,ROWS=[],PANEL=null,SEL=null,TIMER=null,PICK={},META={},SCOPE='active';
+var $=function(s){return document.querySelector(s)};
+var LS={get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+        set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},
+        del:function(k){try{localStorage.removeItem(k)}catch(e){}}};
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){
+  return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function post(b){
+  /* 靜態示範:不發任何網路請求 */
+  return Promise.resolve(
+    b.action==='list' ? JSON.parse(JSON.stringify(window.__DEMO__))
+    : b.action==='confirm' ? {status:'error',message:'這是靜態示範，不會儲存任何資料'}
+    : {status:'ok'});
+}
+function toast(m){var t=$('#toast');t.textContent=m;t.classList.add('on');
+  clearTimeout(t._h);t._h=setTimeout(function(){t.classList.remove('on')},2600)}
+
+SESS=LS.get('epro2.doctor',null);
+$('#btnIn').onclick=function(){
+  var n=$('#lname').value.trim(),c=$('#lcode').value.trim();
+  if(!n||!c){$('#lmsg').textContent='請輸入姓名與代碼';return}
+  post({action:'list',role:'doctor',code:c}).then(function(j){
+    if(j.status!=='ok'){$('#lmsg').textContent='代碼錯誤';return}
+    SESS={name:n,code:c};LS.set('epro2.doctor',SESS);show();
+  });
+};
+$('#lcode').onkeydown=function(e){if(e.key==='Enter')$('#btnIn').click()};
+$('#btnOut').onclick=function(){alert('靜態示範沒有登出。')};
+$('#btnR').onclick=function(){load()};
+
+function show(){
+  $('#login').classList.add('hid');$('#app').classList.remove('hid');$('#hd').classList.remove('hid');
+  $('#who').textContent=SESS.name;
+  load(); if(TIMER)clearInterval(TIMER); TIMER=setInterval(load,60000);
+}
+function load(){
+  post({action:'list',role:'doctor',code:SESS.code,scope:SCOPE}).then(function(j){
+    if(j.status!=='ok'){toast('讀取失敗');return}
+    ROWS=j.rows;PANEL=j.panel;META=j;
+    $('#cnt').textContent=ROWS.length;
+    $('#cv').textContent='CTCAE '+PANEL.ctcae_version;
+    drawList(); if(SEL) drawDetail(SEL);
+  }).catch(function(){toast('連不上')});
+}
+/* 分流四級:red 必開 / act 需給級 / read 只需讀一行 / skip 免開。
+   規則在 grading.py 的 triage(),不在前端 —— 這樣它是可測的。 */
+var FILT='todo';
+function lv(r){return (r.triage||{}).level||'skip'}
+var LVORD={red:0,act:1,read:2,skip:3};
+function drawList(){
+  var n={red:0,act:0,read:0,skip:0};
+  ROWS.forEach(function(r){n[lv(r)]++});
+  var todo=n.red+n.act;
+  var host=document.querySelector('#lbar');
+  if(host) host.innerHTML=
+    '<button class="fbtn'+(FILT==='todo'?' on':'')+'" data-f="todo">需要處理 <b>'+todo+'</b></button>'+
+    '<button class="fbtn'+(FILT==='read'?' on':'')+'" data-f="read">只需讀一行 <b>'+n.read+'</b></button>'+
+    '<button class="fbtn'+(FILT==='all'?' on':'')+'" data-f="all">全部 <b>'+ROWS.length+'</b></button>'+
+    '<span class="kbd" style="margin-left:auto">免開 '+n.skip+' 位（'+
+      Math.round(n.skip/Math.max(1,ROWS.length)*100)+'%）不需要您點開</span>'+
+    /* 到診前輔助工具只關心這一診。更早的或已結案的不該佔版面,
+       但要看得到,所以給明確的範圍切換而不是悄悄藏起來。 */
+    '<span style="flex-basis:100%;height:0"></span>'+
+    '<span class="kbd">範圍</span>'+
+    '<button class="fbtn'+(SCOPE==='active'?' on':'')+'" data-s="active">這一診（'+
+      (META.window_h||48)+ '小時內未結案）<b>'+((META.counts||{}).active||0)+'</b></button>'+
+    '<button class="fbtn'+(SCOPE==='open'?' on':'')+'" data-s="open">所有未結案 <b>'+
+      ((META.counts||{}).open||0)+'</b></button>'+
+    '<button class="fbtn'+(SCOPE==='all'?' on':'')+'" data-s="all">含已結案 <b>'+
+      ((META.counts||{}).all||0)+'</b></button>';
+
+  var list=ROWS.slice().sort(function(a,b){
+    return LVORD[lv(a)]-LVORD[lv(b)]||b.id-a.id});
+  if(FILT==='todo') list=list.filter(function(r){return lv(r)==='red'||lv(r)==='act'});
+  else if(FILT==='read') list=list.filter(function(r){return lv(r)==='read'});
+
+  var h='<tr><th></th><th>填寫</th><th>病歷號</th><th>姓名</th><th>藥別</th>'+
+        '<th>為什麼要看</th><th>初審</th></tr>';
+  if(!list.length) h+='<tr><td colspan="7" style="color:var(--ink2);padding:18px 8px">'+
+    (FILT==='todo'?'這一診目前沒有需要處理的病人。':'沒有符合的項目。')+'</td></tr>';
+  list.forEach(function(r){
+    var L=lv(r), t=r.triage||{};
+    var why='';
+    if(L==='red') why='<b>'+esc((t.why||[]).slice(0,2).join('；'))+'</b>'+
+      ((t.why||[]).length>2?' 等 '+t.why.length+' 項':'');
+    else if(L==='act') why=esc((t.why||[]).join('；'));
+    else if(L==='read') why='—';
+    else why='<span style="color:var(--ink2)">無須處理</span>';
+    var said=r.cc_brief?'<span class="said">「'+esc(r.cc_brief)+
+      (r.cc_brief.length>=40?'…':'')+'」</span>':'';
+    if(r.unfilled&&r.unfilled.length)
+      why+='<span class="why">未填 '+r.unfilled.length+' 題（未填 ≠ 沒症狀）</span>';
+    h+='<tr class="row lv-'+L+(r.closed?' done':'')+'" data-id="'+r.id+'">'+
+      '<td><span class="dot d-'+L+'"></span></td>'+
+      '<td>'+esc(r.ts.slice(5))+'</td><td class="mrn">'+esc(r.mrn)+'</td>'+
+      '<td>'+esc(r.name)+'</td>'+
+      '<td>'+({io:'IO',adc:'ADC',both:'IO+ADC'}[r.drug_class]||'')+'</td>'+
+      '<td>'+why+said+'</td>'+
+      '<td>'+(r.closed?'<span class="tag t-ok">已結案</span>'
+              :r.reviewed?'<span class="tag t-vio">'+esc((r.layer2||{}).who||'')+'</span>'
+                         :'<span class="tag t-grey">未初審</span>')+'</td></tr>';
+  });
+  document.querySelector('#tbl').innerHTML=h;
+  document.querySelectorAll('#lbar .fbtn').forEach(function(b){
+    b.onclick=function(){
+      if(b.dataset.s){SCOPE=b.dataset.s;SEL=null;
+        document.querySelector('#detail').innerHTML='';load();}
+      else {FILT=b.dataset.f;drawList();}
+    };
+  });
+  document.querySelectorAll('tr.row').forEach(function(tr){
+    tr.onclick=function(){SEL=parseInt(tr.dataset.id,10);PICK={};
+      if(typeof TERMS!=='undefined')TERMS=[];
+      drawDetail(SEL);document.querySelector('#detail').scrollIntoView({behavior:'smooth',block:'start'})};
+  });
+}
+
+function item(id){return PANEL.items.filter(function(i){return i.id===id})[0]}
+
+function drawDetail(id){
+  var r=ROWS.filter(function(x){return x.id===id})[0];
+  if(!r){$('#detail').innerHTML='';return}
+  var e=r.envelope, cc=(r.answers.cc||{});
+  var chg=(r.prev&&r.prev.deltas)?r.prev.deltas.filter(function(d){return d.now>d.was}):[];
+  var hasCC=((cc.text||'').trim()||cc.audio);
+
+  /* ---- 一眼摘要:一行給出全貌,不必先讀四個方框 ---- */
+  var gist='<div class="gist"><b style="font-size:15px">#'+r.id+'　'+esc(r.mrn)+'　'+esc(r.name)+'</b>'+
+    '<span class="g g-grey">'+({io:'IO',adc:'ADC',both:'IO+ADC'}[r.drug_class]||'')+'</span>';
+  if(r.flags.today.length) gist+='<span class="g g-red">優先處理 <b>'+r.flags.today.length+'</b></span>';
+  if(hasCC)               gist+='<span class="g g-vio">有話要說</span>';
+  if(chg.length)          gist+='<span class="g g-amb">惡化 <b>'+chg.length+'</b></span>';
+  if(r.unfilled.length)   gist+='<span class="g g-grey">未填 <b>'+r.unfilled.length+'</b></span>';
+  if(!r.flags.today.length&&!hasCC&&!chg.length) gist+='<span class="g g-ok">無須今日處理</span>';
+  gist+='<span class="g '+(r.reviewed?'g-vio':'g-grey')+'">'+
+    (r.reviewed?'初審 '+esc(r.layer2.who):'未初審')+'</span>'+
+    '<span style="margin-left:auto" class="kbd">CTCAE '+esc(r.ctcae_version)+'</span></div>';
+
+  /* ---- 左欄:分診 ---- */
+  var L='';
+  if(r.flags.today.length)
+    L+='<div class="box b-red"><h3>看診時優先處理</h3><ul>'+
+      r.flags.today.map(function(f){return '<li>'+esc(f.text)+'</li>'}).join('')+'</ul></div>';
+  if(hasCC){
+    L+='<div class="box b-cc"><h3>病人自己說的話</h3>';
+    if((cc.text||'').trim()) L+='<p class="ccq">'+esc(cc.text)+'</p>';
+    if(cc.audio) L+='<audio controls src="/media/'+esc(cc.audio)+'"></audio>';
+    if((r.media_failed||[]).indexOf('audio')>=0)
+      L+='<p style="margin:8px 0 0;color:var(--red);font-weight:700">⚠️ 病人錄了音但檔案沒存成功，請直接聯絡病人。</p>';
+    L+='</div>';
+  }
+  if(chg.length)
+    L+='<div class="box b-amb"><h3>比上次惡化（'+esc(r.prev.ts)+'）</h3><ul>'+
+      chg.map(function(d){return '<li>'+esc(d.term)+'　'+d.was+' → <b>'+d.now+'</b></li>'}).join('')+'</ul></div>';
+  if(e.triggers.length)
+    L+='<div class="box b-amb"><h3>建議安排的檢查</h3><ul>'+
+      e.triggers.map(function(t){return '<li>'+esc(t)+'</li>'}).join('')+'</ul></div>';
+  var unk=[];
+  if(r.unfilled.length) unk.push('未填：'+r.unfilled.join('、'));
+  if(r.flags.unknown.length) unk.push('資料不足：'+r.flags.unknown.map(function(f){return f.text}).join('；'));
+  if(unk.length)
+    L+='<div class="box b-grey"><h3>判不出來（未填 ≠ 沒症狀）</h3><ul>'+
+      unk.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>';
+  if(r.layer2){
+    var l2=r.layer2;
+    L+='<div class="box b-cc"><h3>第二層　個管師初審</h3>'+
+      '<div class="kv" style="font-size:13.5px"><dt>初審</dt><dd>'+esc(l2.who)+'　'+esc(l2.ts)+'</dd>'+
+      '<dt>緊急度</dt><dd>'+esc({urgent:'緊急',priority:'優先',routine:'常規'}[l2.urgency]||l2.urgency)+
+      '　'+(l2.contacted?'已電聯':'未電聯')+'</dd>'+
+      (l2.terms&&l2.terms.length?'<dt>對應詞條</dt><dd>'+esc(l2.terms.join('、'))+'</dd>':'')+
+      (l2.note?'<dt>加註</dt><dd>'+esc(l2.note)+'</dd>':'')+'</div></div>';
+  }
+  L+='<details class="more" style="margin-top:4px"><summary>病人填答全文（第一層原始內容）</summary>'+rawAnswers(r)+'</details>';
+
+  /* ---- 右欄:證據,按官方器官分類分組 ---- */
+  var all=e.determinable.concat(e.floor_only,e.cannot_grade);
+  var act=all.filter(function(x){return x.actionable});
+  var rest=all.filter(function(x){return !x.actionable});
+  var R='<p class="mini"><b>下面不是分級，是證據。</b>最終等級要您點過才成立；虛線框尚未確認，不會進入任何申請或通報。</p>';
+  R+=byOrgan(act,r,true);
+  if(rest.length)
+    R+='<details class="more"><summary>另有 '+rest.length+' 項無相關回報（依定義仍不能排除）</summary>'+
+       byOrgan(rest,r,false)+'</details>';
+
+  $('#detail').innerHTML=gist+'<div class="cols"><div>'+L+'</div><div>'+R+
+    '<div id="actbar"><span class="cnt" id="pcnt">尚未點選任何等級</span>'+
+    '<input id="plan" placeholder="處置（選填）" style="flex:1 1 200px;min-width:160px;font:inherit;font-size:14px;padding:8px;border:1px solid var(--edge);border-radius:8px;background:var(--card);color:var(--ink)">'+
+    '<button class="btn" id="ok" style="min-height:40px;font-size:15px;padding:0 18px">確認並記錄</button>'+
+    '<button class="btn ghost" id="close" style="min-height:40px;font-size:15px;padding:0 14px">關閉</button>'+
+    '<span class="kbd"><b>j</b>/<b>k</b> 換病人　<b>↑</b>/<b>↓</b> 換項目　<b>0</b>–<b>4</b> 給級　<b>i</b> 原文　<b>Enter</b> 確認</span>'+
+    '</div></div></div>';
+  FOCUS=0; wireDetail(r); paintFocus();
+}
+
+function byOrgan(list,r,open){
+  if(!list.length) return '<p class="mini">（無）</p>';
+  var g={}; list.forEach(function(x){ (g[x.soc]=g[x.soc]||[]).push(x) });
+  var order=['肺','心臟','腸胃','肝膽','內分泌','神經','腎臟','皮膚','眼睛','肌肉骨骼','血液','代謝營養','全身','其他'];
+  var h='';
+  order.forEach(function(soc){
+    if(!g[soc]) return;
+    h+='<div class="soc"><div class="soch">'+esc(soc)+'<span class="n">'+g[soc].length+' 項</span></div>';
+    g[soc].forEach(function(x){ h+=termRow(x,r) });
+    h+='</div>';
+  });
+  return h;
+}
+
+/* 一項一行。原文與缺口按需展開 —— 原本每項都攤開約 150 字英文,
+   一位病人乘以二十幾項就是兩千多字的閱讀量。 */
+function termRow(x,r){
+  var conf=((r.layer3||{}).grades||{})[x.term];
+  var sug=((r.layer2||{}).suggest||{})[x.term];
+  var brief=x.missing.length?('缺 '+x.missing.length+' 項'):(x.floor===x.ceiling?'證據已足':'');
+  var h='<div class="trow" data-term="'+esc(x.term)+'">'+
+    '<span class="tname">'+esc(x.term)+
+      (brief?'<small>'+esc(brief)+(x.note?'・'+esc(x.note.slice(0,42))+(x.note.length>42?'…':''):'')+'</small>':'')+
+    '</span>'+
+    '<span class="rng">'+(x.floor===x.ceiling?('G'+x.floor):('G'+x.floor+'–G'+x.ceiling))+'</span>'+
+    (sug!=null?'<span class="g g-vio">個管 '+esc(sug)+'</span>':'')+
+    '<span class="grades">'+[0,1,2,3,4].map(function(gg){
+      if(gg>x.ceiling) return '';
+      return '<button class="gb'+((conf!=null&&String(conf)===String(gg))?' on':'')+
+        ((sug!=null&&String(sug)===String(gg))?' sugg':'')+'" data-g="'+gg+'">'+gg+'</button>';
+    }).join('')+'</span>'+
+    '<button class="info" title="原文與缺口">ⓘ</button></div>';
+  var d='';
+  if(x.basis_text) d+='下限依據原文：<code>'+esc(x.basis_text)+'</code>';
+  if(x.note) d+='<div style="margin-top:5px">'+esc(x.note)+'</div>';
+  if(x.missing.length) d+='<div style="margin-top:5px">還缺：'+esc(x.missing.join('；'))+'</div>';
+  h+='<div class="det hid">'+(d||'（無其他資訊）')+'</div>';
+  return h;
+}
+
+function rawAnswers(r){
+  var h='<div class="kv" style="margin-top:8px;font-size:13.5px">';
+  PANEL.items.forEach(function(it){
+    var s=r.answers[it.id]||{},p=[];
+    it.q.forEach(function(q){
+      var v=s[q.id]; if(v===undefined||v===null||v==='')return;
+      p.push(q.text.replace(/[？?].*$/,'')+'＝'+
+        (q.type==='choice'?q.opts[v]:q.type==='yesno'?(v?'有':'沒有'):v+(q.unit||'')));
+    });
+    if(s.bsa!=null)p.push('體表面積約 '+s.bsa+'%');
+    if(p.length)h+='<dt>'+it.icon+' '+esc(it.label)+'</dt><dd>'+esc(p.join('；'))+'</dd>';
+  });
+  h+='<dt>🏠 日常活動</dt><dd>工具性：'+(r.answers.adl_i===1?'有做不來的':r.answers.adl_i===0?'都做得來':'未填')+
+     '　自我照顧：'+(r.answers.adl_s===1?'有做不來的':r.answers.adl_s===0?'都做得來':'未填')+'</dd></div>';
+  if((r.answers.rash||{}).photo)h+='<img class="shot" src="/media/'+esc(r.answers.rash.photo)+'">';
+  return h;
+}
+
+/* ---- 鍵盤:一診四十位病人,滑鼠來回是主要時間成本 ---- */
+var FOCUS=0;
+function rowsEl(){return Array.prototype.slice.call(document.querySelectorAll('#detail .trow'))}
+function paintFocus(){
+  var rs=rowsEl(); rs.forEach(function(el,i){el.classList.toggle('foc',i===FOCUS)});
+  if(rs[FOCUS]) rs[FOCUS].scrollIntoView({block:'nearest'});
+}
+function updCnt(){
+  var n=Object.keys(PICK).length, el=$('#pcnt');
+  if(el) el.textContent=n?('已點選 '+n+' 項等級'):'尚未點選任何等級';
+}
+
+function wireDetail(r){
+  document.querySelectorAll('#detail .trow').forEach(function(row){
+    var term=row.dataset.term;
+    row.querySelectorAll('.gb').forEach(function(b){
+      b.onclick=function(){
+        row.querySelectorAll('.gb').forEach(function(x){x.classList.remove('on')});
+        b.classList.add('on'); PICK[term]=parseInt(b.dataset.g,10); updCnt();
+      };
+    });
+    var inf=row.querySelector('.info');
+    if(inf) inf.onclick=function(){ row.nextElementSibling.classList.toggle('hid') };
+    row.onclick=function(ev){
+      if(ev.target.closest('.gb')||ev.target.closest('.info'))return;
+      FOCUS=rowsEl().indexOf(row); paintFocus();
+    };
+  });
+  $('#close').onclick=function(){SEL=null;$('#detail').innerHTML='';PICK={}};
+  $('#ok').onclick=function(){ doConfirm(r) };
+  updCnt();
+}
+
+function doConfirm(r){
+  if(!Object.keys(PICK).length){toast('請至少點一個等級，系統不會替您填');return}
+  post({action:'confirm',id:r.id,code:SESS.code,who:SESS.name,
+        grades:PICK,plan:($('#plan')||{}).value||''}).then(function(j){
+    if(j.status!=='ok'){toast('失敗：'+j.message);return}
+    toast('已記錄，判定者 '+SESS.name);PICK={};load();
+  });
+}
+
+document.addEventListener('keydown',function(ev){
+  if(/^(INPUT|TEXTAREA|SELECT)$/.test((ev.target.tagName||'')))return;
+  if(!SESS)return;
+  /* 鍵盤換病人要跟畫面同序,而且只在目前篩選的子集內走,
+     否則按 j 會跳到一位畫面上看不到的病人。 */
+  var list=ROWS.slice().sort(function(a,b){return LVORD[lv(a)]-LVORD[lv(b)]||b.id-a.id});
+  if(FILT==='todo') list=list.filter(function(r){return lv(r)==='red'||lv(r)==='act'});
+  else if(FILT==='read') list=list.filter(function(r){return lv(r)==='read'});
+  var idx=list.findIndex(function(x){return x.id===SEL});
+  if(ev.key==='j'||ev.key==='k'){
+    ev.preventDefault();
+    if(!list.length)return;
+    idx=(idx<0)?0:(idx+(ev.key==='j'?1:-1)+list.length)%list.length;
+    SEL=list[idx].id; PICK={}; drawDetail(SEL);
+    document.querySelector('#detail').scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+  var rs=rowsEl(); if(!rs.length)return;
+  if(ev.key==='ArrowDown'){ev.preventDefault();FOCUS=Math.min(FOCUS+1,rs.length-1);paintFocus();return}
+  if(ev.key==='ArrowUp'){ev.preventDefault();FOCUS=Math.max(FOCUS-1,0);paintFocus();return}
+  if(ev.key==='i'){ev.preventDefault();var d=rs[FOCUS].nextElementSibling;if(d)d.classList.toggle('hid');return}
+  if(/^[0-4]$/.test(ev.key)){
+    var b=rs[FOCUS].querySelector('.gb[data-g="'+ev.key+'"]');
+    if(b){ev.preventDefault();b.click()}
+    return;
+  }
+  if(ev.key==='Enter'&&SEL!=null){
+    ev.preventDefault();
+    var cur=ROWS.filter(function(x){return x.id===SEL})[0];
+    if(cur)doConfirm(cur);
+  }
+});
+
+SESS={name:'示範模式',code:'demo'};
+document.addEventListener('DOMContentLoaded',show);
+if(document.readyState!=='loading') show();
+</script></body></html>
